@@ -16,6 +16,7 @@ export const id: Translation = {
 	[Key.untitled]: "Tanpa Judul",
 	[Key.uncategorized]: "Tanpa Kategori",
 	[Key.noTags]: "Tanpa Tag",
+	[Key.noPosts]: "Belum ada artikel",
 
 	[Key.wordCount]: "kata",
 	[Key.wordsCount]: "kata",

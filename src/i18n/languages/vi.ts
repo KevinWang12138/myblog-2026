@@ -16,6 +16,7 @@ export const vi: Translation = {
 	[Key.untitled]: "Không tiêu đề",
 	[Key.uncategorized]: "Chưa phân loại",
 	[Key.noTags]: "Chưa có thẻ",
+	[Key.noPosts]: "Chưa có bài viết",
 
 	[Key.wordCount]: "từ",
 	[Key.wordsCount]: "từ",

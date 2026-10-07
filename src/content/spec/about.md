@@ -5,7 +5,7 @@ Kevin Wang的主页 记录一个程序员的工作日常和创业经历
 
 练习时长2年半的前大厂程序员
 
-特别感谢[Fuwari](https://github.com/saicaca/fuwari)的开源博客模版.
+特别感谢 Fuwari 的开源博客模版.
 
 <!-- ::github{repo="saicaca/fuwari"}
 
