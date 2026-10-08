@@ -1,15 +1,15 @@
-# 关于我
-Kevin Wang的主页 记录一个程序员的工作日常和创业经历
+# About Me
 
-毕业于某末九
+Hi, I'm Kevin 👋
 
-练习时长2年半的前大厂程序员
+By day ☀️, I lead an engineering team at a tech company. By night 🌃, I'm a founder building my own apps 📱.
 
-特别感谢 Fuwari 的开源博客模版.
+This blog is where I write about:
 
-<!-- ::github{repo="saicaca/fuwari"}
+- **AI coding**: what it gets right, what it gets wrong, and why better models don't always mean better code.
+- **Leading a dev team**: code review, architecture, and helping engineers grow when AI writes half the code.
+- **Building products**: the real story of shipping my own apps, numbers and mistakes included.
 
-> ### Sources of images used in this site
-> - [Unsplash](https://unsplash.com/)
-> - [星と少女](https://www.pixiv.net/artworks/108916539) by [Stella](https://www.pixiv.net/users/93273965)
-> - [Rabbit - v1.4 Showcase](https://civitai.com/posts/586908) by [Rabbit_YourMajesty](https://civitai.com/user/Rabbit_YourMajesty) -->
+Find me on [X @kevinwang_me](https://x.com/kevinwang_me). Thanks for stopping by 😄
+
+Built with the open-source [Fuwari](https://github.com/saicaca/fuwari) theme.
