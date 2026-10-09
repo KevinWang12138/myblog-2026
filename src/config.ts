@@ -84,7 +84,7 @@ export const localizedSiteConfig = {
 		title: "Kevin Wang",
 		subtitle: "记录技术团队管理与独立应用开发。",
 		name: "Kevin Wang",
-		bio: "白天，带领科技公司的工程团队 ☀️\n夜晚，作为创始人做产品 🌃\n打造自己的应用 📱",
+		bio: "白天大厂打工 ☀️\n晚上出海创业 🌍",
 		bannerCredit: "",
 	},
 } satisfies Record<
