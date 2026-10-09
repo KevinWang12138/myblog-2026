@@ -1,11 +1,13 @@
 ---
 import I18nKey from "../../i18n/i18nKey";
+import { getLocale } from "@i18n/locale";
+import { siteCopy } from "@i18n/site-copy";
 import { i18n } from "../../i18n/translation";
 import { getCategoryList } from "../../utils/content-utils";
 import ButtonLink from "../control/ButtonLink.astro";
 import WidgetLayout from "./WidgetLayout.astro";
 
-const categories = await getCategoryList();
+const categories = await getCategoryList(getLocale(Astro.url));
 
 const COLLAPSED_HEIGHT = "7.5rem";
 const COLLAPSE_THRESHOLD = 5;
@@ -18,16 +20,18 @@ interface Props {
 }
 const className = Astro.props.class;
 const style = Astro.props.style;
+const locale = getLocale(Astro.url);
+const copy = siteCopy[locale];
 ---
 
-{categories.length > 0 && <WidgetLayout name={i18n(I18nKey.categories)} id="categories" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT}
+{categories.length > 0 && <WidgetLayout name={i18n(I18nKey.categories, locale)} id="categories" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT}
                 class={className} style={style}
 >
     {categories.map((c) =>
         <ButtonLink
             url={c.url}
             badge={String(c.count)}
-            label={`View all posts in the ${c.name.trim()} category`}
+            label={`${copy.categoryLink}: ${c.name.trim()}`}
         >
             {c.name.trim()}
         </ButtonLink>

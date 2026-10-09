@@ -1,10 +1,14 @@
 <script lang="ts">
+import type { Locale } from "@i18n/locale";
+import { siteCopy } from "@i18n/site-copy";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
-import { url } from "@utils/url-utils.ts";
 import { onMount } from "svelte";
 import type { SearchResult } from "@/global";
+
+export let locale: Locale = "en";
+$: copy = siteCopy[locale];
 
 let keywordDesktop = "";
 let keywordMobile = "";
@@ -12,24 +16,8 @@ let result: SearchResult[] = [];
 let isSearching = false;
 let pagefindLoaded = false;
 let initialized = false;
-
-const fakeResult: SearchResult[] = [
-	{
-		url: url("/"),
-		meta: {
-			title: "This Is a Fake Search Result",
-		},
-		excerpt:
-			"Because the search cannot work in the <mark>dev</mark> environment.",
-	},
-	{
-		url: url("/"),
-		meta: {
-			title: "If You Want to Test the Search",
-		},
-		excerpt: "Try running <mark>npm build && npm preview</mark> instead.",
-	},
-];
+let hasSearched = false;
+let searchFailed = false;
 
 const togglePanel = () => {
 	const panel = document.getElementById("search-panel");
@@ -49,6 +37,7 @@ const setPanelVisibility = (show: boolean, isDesktop: boolean): void => {
 
 const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 	if (!keyword) {
+		hasSearched = false;
 		setPanelVisibility(false, isDesktop);
 		result = [];
 		return;
@@ -59,6 +48,8 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 	}
 
 	isSearching = true;
+	hasSearched = true;
+	searchFailed = false;
 
 	try {
 		let searchResults: SearchResult[] = [];
@@ -69,29 +60,30 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 				response.results.map((item) => item.data()),
 			);
 		} else if (import.meta.env.DEV) {
-			searchResults = fakeResult;
+			searchResults = [];
 		} else {
 			searchResults = [];
 			console.error("Pagefind is not available in production environment.");
 		}
 
 		result = searchResults;
-		setPanelVisibility(result.length > 0, isDesktop);
+		setPanelVisibility(true, isDesktop);
 	} catch (error) {
 		console.error("Search error:", error);
 		result = [];
-		setPanelVisibility(false, isDesktop);
+		searchFailed = true;
+		setPanelVisibility(true, isDesktop);
 	} finally {
 		isSearching = false;
 	}
 };
 
 onMount(() => {
-	const initializeSearch = () => {
+	const initializeSearch = (failed = false) => {
 		initialized = true;
 		pagefindLoaded =
 			typeof window !== "undefined" &&
-			!!window.pagefind &&
+			!failed && !!window.pagefind &&
 			typeof window.pagefind.search === "function";
 		console.log("Pagefind status on init:", pagefindLoaded);
 		if (keywordDesktop) search(keywordDesktop, true);
@@ -112,7 +104,7 @@ onMount(() => {
 			console.warn(
 				"Pagefind load error event received. Search functionality will be limited.",
 			);
-			initializeSearch(); // Initialize with pagefindLoaded as false
+			initializeSearch(true);
 		});
 
 		// Fallback in case events are not caught or pagefind is already loaded by the time this script runs
@@ -125,13 +117,13 @@ onMount(() => {
 	}
 });
 
-$: if (initialized && keywordDesktop) {
+$: if (initialized) {
 	(async () => {
 		await search(keywordDesktop, true);
 	})();
 }
 
-$: if (initialized && keywordMobile) {
+$: if (initialized) {
 	(async () => {
 		await search(keywordMobile, false);
 	})();
@@ -144,15 +136,15 @@ $: if (initialized && keywordMobile) {
       dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
 ">
     <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
-    <input placeholder="{i18n(I18nKey.search)}" bind:value={keywordDesktop} on:focus={() => search(keywordDesktop, true)}
+    <input placeholder={i18n(I18nKey.search, locale)} aria-label={i18n(I18nKey.search, locale)} bind:value={keywordDesktop} on:focus={() => search(keywordDesktop, true)}
            class="transition-all pl-10 text-sm bg-transparent outline-0
-         h-full w-40 active:w-60 focus:w-60 text-black/50 dark:text-white/50"
+         h-full w-28 xl:w-40 text-black/50 dark:text-white/50"
     >
 </div>
 
 <!-- toggle btn for phone/tablet view -->
-<button on:click={togglePanel} aria-label="Search Panel" id="search-switch"
-        class="btn-plain scale-animation lg:!hidden rounded-lg w-11 h-11 active:scale-90">
+<button on:click={togglePanel} aria-label={i18n(I18nKey.search, locale)} id="search-switch"
+        class="btn-plain scale-animation lg:!hidden rounded-lg w-9 sm:w-11 h-11 active:scale-90">
     <Icon icon="material-symbols:search" class="text-[1.25rem]"></Icon>
 </button>
 
@@ -166,12 +158,18 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2">
       dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
   ">
         <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
-        <input placeholder="Search" bind:value={keywordMobile}
+        <input placeholder={i18n(I18nKey.search, locale)} aria-label={i18n(I18nKey.search, locale)} bind:value={keywordMobile}
                class="pl-10 absolute inset-0 text-sm bg-transparent outline-0
                focus:w-60 text-black/50 dark:text-white/50"
         >
     </div>
 
+    <div aria-live="polite" class="text-sm text-50 px-3 py-2">
+        {#if import.meta.env.DEV}{copy.searchDev}
+        {:else if isSearching}{copy.searching}
+        {:else if searchFailed || (initialized && !pagefindLoaded)}{copy.searchUnavailable}
+        {:else if hasSearched && result.length === 0}{copy.noResults}{/if}
+    </div>
     <!-- search results -->
     {#each result as item}
         <a href={item.url}

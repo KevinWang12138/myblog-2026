@@ -1,59 +1,63 @@
-/* This is a script to create a new post markdown file with front-matter */
+import fs from "node:fs";
+import path from "node:path";
 
-import fs from "fs"
-import path from "path"
-
+// ===== 按本地日期生成文章发布日期 =====
 function getDate() {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, "0")
-  const day = String(today.getDate()).padStart(2, "0")
-
-  return `${year}-${month}-${day}`
+	const today = new Date();
+	return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 }
 
-const args = process.argv.slice(2)
-
-if (args.length === 0) {
-  console.error(`Error: No filename argument provided
-Usage: npm run new-post -- <filename>`)
-  process.exit(1) // Terminate the script and return error code 1
-}
-
-let fileName = args[0]
-
-// Add .md extension if not present
-const fileExtensionRegex = /\.(md|mdx)$/i
-if (!fileExtensionRegex.test(fileName)) {
-  fileName += ".md"
-}
-
-const targetDir = "./src/content/posts/"
-const fullPath = path.join(targetDir, fileName)
-
-if (fs.existsSync(fullPath)) {
-  console.error(`Error: File ${fullPath} already exists `)
-  process.exit(1)
-}
-
-// recursive mode creates multi-level directories
-const dirPath = path.dirname(fullPath)
-if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true })
-}
-
-const content = `---
-title: ${args[0]}
+// ===== 一次创建配对草稿，避免覆盖已有文章 =====
+function createPostPair(input) {
+	// ===== 1.限制文件路径在文章目录内，两份文件共用同一个配对标识 =====
+	const extension = /\.mdx$/i.test(input) ? ".mdx" : ".md";
+	const slug = input.replace(/\.(md|mdx)$/i, "");
+	if (
+		!slug ||
+		!/^[\p{L}\p{N}_-]+(?:\/[\p{L}\p{N}_-]+)*$/u.test(slug) ||
+		/^(en|zh)\//.test(slug)
+	) {
+		throw new Error(
+			"文章名只能包含文字、数字、下划线、连字符和目录分隔符，请勿加 en/ 或 zh/ 前缀。",
+		);
+	}
+	const files = ["en", "zh"].map((lang) => ({
+		lang,
+		file: path.join("src/content/posts", lang, `${slug}${extension}`),
+	}));
+	for (const { file } of files) {
+		if (fs.existsSync(file))
+			throw new Error(`文章已存在：${file}，未创建任何文件。`);
+	}
+	// ===== 2.默认创建草稿，写完各自的正文和元数据后再发布 =====
+	for (const { lang, file } of files) {
+		fs.mkdirSync(path.dirname(file), { recursive: true });
+		fs.writeFileSync(
+			file,
+			`---
+title: ${JSON.stringify(slug.split("/").at(-1))}
 published: ${getDate()}
 description: ''
 image: ''
 tags: []
 category: ''
-draft: false 
-lang: ''
+draft: true
+lang: ${lang}
+translationKey: ${JSON.stringify(slug)}
 ---
-`
+`,
+		);
+		console.log(`已创建 ${file}`);
+	}
+}
 
-fs.writeFileSync(path.join(targetDir, fileName), content)
-
-console.log(`Post ${fullPath} created`)
+try {
+	if (process.argv.length !== 3)
+		throw new Error(
+			"用法：pnpm new-post <文章名>，例如 pnpm new-post ai-coding",
+		);
+	createPostPair(process.argv[2]);
+} catch (error) {
+	console.error(error instanceof Error ? error.message : "创建文章失败");
+	process.exitCode = 1;
+}

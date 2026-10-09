@@ -14,6 +14,20 @@ const className = Astro.props.class;
 </div>
 
 <script>
+import { getLocale } from "@i18n/locale";
+import { siteCopy } from "@i18n/site-copy";
+
+// ===== 按页面语言更新 Markdown 插件的默认提示与复制按钮 =====
+function localizeMarkdown() {
+    const copy = siteCopy[getLocale(new URL(window.location.href))];
+    document.querySelectorAll(".copy-btn").forEach(button => button.setAttribute("aria-label", copy.copyCode));
+    for (const [type, label] of Object.entries(copy.admonitions)) {
+        document.querySelectorAll(`.bdm-${type} .bdm-title[data-default-title]`).forEach(title => { title.textContent = label; });
+    }
+}
+localizeMarkdown();
+document.addEventListener("astro:page-load", localizeMarkdown);
+
 document.addEventListener("click", function (e: MouseEvent) {
     const target = e.target as Element | null;
     if (target && target.classList.contains("copy-btn")) {

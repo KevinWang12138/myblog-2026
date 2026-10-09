@@ -1,7 +1,8 @@
 ---
 
-import { profileConfig } from "../config";
-import { url } from "../utils/url-utils";
+import { getLocale } from "@i18n/locale";
+import { localizedSiteConfig } from "../config";
+const profileConfig = localizedSiteConfig[getLocale(Astro.url)];
 
 const currentYear = new Date().getFullYear();
 ---

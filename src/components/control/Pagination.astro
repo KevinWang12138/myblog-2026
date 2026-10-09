@@ -1,4 +1,8 @@
 ---
+import { getLocale } from "@i18n/locale";
+import { siteCopy } from "@i18n/site-copy";
+const locale = getLocale(Astro.url);
+const copy = siteCopy[locale];
 import type { Page } from "astro";
 import { Icon } from "astro-icon/components";
 import { url } from "../../utils/url-utils";
@@ -52,7 +56,7 @@ const getPageUrl = (p: number) => {
 ---
 
 <div class:list={[className, "flex flex-row gap-3 justify-center"]} style={style}>
-    <a href={page.url.prev || ""} aria-label={page.url.prev ? "Previous Page" : null}
+    <a href={page.url.prev || ""} aria-label={page.url.prev ? copy.previousPage : null}
        class:list={["btn-card overflow-hidden rounded-lg text-[var(--primary)] w-11 h-11",
            {"disabled": page.url.prev == undefined}
        ]}
@@ -69,12 +73,12 @@ const getPageUrl = (p: number) => {
                 >
                     {p}
                 </div>
-            return <a href={url(getPageUrl(p))} aria-label={`Page ${p}`}
+            return <a href={url(getPageUrl(p), locale)} aria-label={locale === "zh" ? `第 ${p} 页` : `${copy.page} ${p}`}
                 class="btn-card w-11 h-11 rounded-lg overflow-hidden active:scale-[0.85]"
             >{p}</a>
         })}
     </div>
-    <a href={page.url.next || ""} aria-label={page.url.next ? "Next Page" : null}
+    <a href={page.url.next || ""} aria-label={page.url.next ? copy.nextPage : null}
        class:list={["btn-card overflow-hidden rounded-lg text-[var(--primary)] w-11 h-11",
            {"disabled": page.url.next == undefined}
        ]}

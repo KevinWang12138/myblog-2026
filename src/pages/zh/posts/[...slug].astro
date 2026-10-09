@@ -1,9 +1,9 @@
 ---
 import { getSortedPosts } from "@utils/content-utils";
 import { getPublicSlug } from "@utils/url-utils";
-import PostDetail from "../../components/pages/PostDetail.astro";
+import PostDetail from "../../../components/pages/PostDetail.astro";
 export async function getStaticPaths() {
-	return (await getSortedPosts("en")).map((entry) => ({
+	return (await getSortedPosts("zh")).map((entry) => ({
 		params: { slug: getPublicSlug(entry.slug) }, props: { entry },
 	}));
 }

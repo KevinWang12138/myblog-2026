@@ -1,114 +1,81 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import I18nKey from "@i18n/i18nKey";
+import { type Locale } from "@i18n/locale";
 import { i18n } from "@i18n/translation";
-import { getCategoryUrl } from "@utils/url-utils.ts";
+import { getCategoryUrl } from "./url-utils";
+import { validatePostTranslations } from "./post-localization";
 
-// // Retrieve posts and sort them by publication date
-async function getRawSortedPosts() {
-	const allBlogPosts = await getCollection("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
-
-	const sorted = allBlogPosts.sort((a, b) => {
-		const dateA = new Date(a.data.published);
-		const dateB = new Date(b.data.published);
-		return dateA > dateB ? -1 : 1;
-	});
-	return sorted;
+// ===== 读取可见文章并验证语言配对，生产环境不公开草稿 =====
+export async function getAllPosts() {
+	const posts = await getCollection(
+		"posts",
+		({ data }) => !import.meta.env.PROD || !data.draft,
+	);
+	validatePostTranslations(posts);
+	return posts;
 }
 
-export async function getSortedPosts() {
-	const sorted = await getRawSortedPosts();
-
-	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = sorted[i - 1].slug;
-		sorted[i].data.nextTitle = sorted[i - 1].data.title;
-	}
-	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = sorted[i + 1].slug;
-		sorted[i].data.prevTitle = sorted[i + 1].data.title;
-	}
-
-	return sorted;
+// ===== 每种语言独立排序和连接上一篇、下一篇 =====
+export async function getSortedPosts(locale: Locale = "en") {
+	const posts = (await getAllPosts())
+		.filter((post) => post.data.lang === locale)
+		.sort(
+			(a, b) =>
+				b.data.published.getTime() - a.data.published.getTime() ||
+				a.slug.localeCompare(b.slug),
+		);
+	return posts.map((post, index) => ({
+		...post,
+		data: {
+			...post.data,
+			nextSlug: posts[index - 1]?.slug || "",
+			nextTitle: posts[index - 1]?.data.title || "",
+			prevSlug: posts[index + 1]?.slug || "",
+			prevTitle: posts[index + 1]?.data.title || "",
+		},
+	}));
 }
+
 export type PostForList = {
 	slug: string;
 	data: CollectionEntry<"posts">["data"];
 };
-export async function getSortedPostsList(): Promise<PostForList[]> {
-	const sortedFullPosts = await getRawSortedPosts();
-
-	// delete post.body
-	const sortedPostsList = sortedFullPosts.map((post) => ({
-		slug: post.slug,
-		data: post.data,
+export async function getSortedPostsList(
+	locale: Locale = "en",
+): Promise<PostForList[]> {
+	return (await getSortedPosts(locale)).map(({ slug, data }) => ({
+		slug,
+		data,
 	}));
-
-	return sortedPostsList;
-}
-export type Tag = {
-	name: string;
-	count: number;
-};
-
-export async function getTagList(): Promise<Tag[]> {
-	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
-
-	const countMap: { [key: string]: number } = {};
-	allBlogPosts.forEach((post: { data: { tags: string[] } }) => {
-		post.data.tags.forEach((tag: string) => {
-			if (!countMap[tag]) countMap[tag] = 0;
-			countMap[tag]++;
-		});
-	});
-
-	// sort tags
-	const keys: string[] = Object.keys(countMap).sort((a, b) => {
-		return a.toLowerCase().localeCompare(b.toLowerCase());
-	});
-
-	return keys.map((key) => ({ name: key, count: countMap[key] }));
 }
 
-export type Category = {
-	name: string;
-	count: number;
-	url: string;
-};
-
-export async function getCategoryList(): Promise<Category[]> {
-	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
-	const count: { [key: string]: number } = {};
-	allBlogPosts.forEach((post: { data: { category: string | null } }) => {
-		if (!post.data.category) {
-			const ucKey = i18n(I18nKey.uncategorized);
-			count[ucKey] = count[ucKey] ? count[ucKey] + 1 : 1;
-			return;
-		}
-
-		const categoryName =
-			typeof post.data.category === "string"
-				? post.data.category.trim()
-				: String(post.data.category).trim();
-
-		count[categoryName] = count[categoryName] ? count[categoryName] + 1 : 1;
-	});
-
-	const lst = Object.keys(count).sort((a, b) => {
-		return a.toLowerCase().localeCompare(b.toLowerCase());
-	});
-
-	const ret: Category[] = [];
-	for (const c of lst) {
-		ret.push({
-			name: c,
-			count: count[c],
-			url: getCategoryUrl(c),
-		});
+export type Tag = { name: string; count: number };
+export async function getTagList(locale: Locale = "en"): Promise<Tag[]> {
+	const counts = new Map<string, number>();
+	for (const post of await getSortedPosts(locale)) {
+		for (const tag of post.data.tags)
+			counts.set(tag, (counts.get(tag) || 0) + 1);
 	}
-	return ret;
+	return [...counts]
+		.sort(([a], [b]) => a.localeCompare(b, locale))
+		.map(([name, count]) => ({ name, count }));
+}
+
+export type Category = Tag & { url: string };
+export async function getCategoryList(
+	locale: Locale = "en",
+): Promise<Category[]> {
+	const counts = new Map<string, number>();
+	for (const post of await getSortedPosts(locale)) {
+		const name =
+			post.data.category?.trim() || i18n(I18nKey.uncategorized, locale);
+		counts.set(name, (counts.get(name) || 0) + 1);
+	}
+	return [...counts]
+		.sort(([a], [b]) => a.localeCompare(b, locale))
+		.map(([name, count]) => ({
+			name,
+			count,
+			url: getCategoryUrl(name, locale),
+		}));
 }

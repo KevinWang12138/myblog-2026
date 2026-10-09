@@ -5,6 +5,7 @@ import type {
 	ProfileConfig,
 	SiteConfig,
 } from "./types/config";
+import type { Locale } from "./i18n/locale";
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
@@ -69,3 +70,30 @@ export const expressiveCodeConfig: ExpressiveCodeConfig = {
 	// Please select a dark theme, as this blog theme currently only supports dark background color
 	theme: "github-dark",
 };
+
+// ===== 两套站点文案独立维护，视觉配置继续共用 =====
+export const localizedSiteConfig = {
+	en: {
+		title: siteConfig.title,
+		subtitle: siteConfig.subtitle,
+		name: profileConfig.name,
+		bio: profileConfig.bio,
+		bannerCredit: siteConfig.banner.credit.text,
+	},
+	zh: {
+		title: "Kevin Wang",
+		subtitle: "记录技术团队管理与独立应用开发。",
+		name: "Kevin Wang",
+		bio: "白天，带领科技公司的工程团队 ☀️\n夜晚，作为创始人做产品 🌃\n打造自己的应用 📱",
+		bannerCredit: "",
+	},
+} satisfies Record<
+	Locale,
+	{
+		title: string;
+		subtitle: string;
+		name: string;
+		bio?: string;
+		bannerCredit: string;
+	}
+>;

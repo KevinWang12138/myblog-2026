@@ -1,9 +1,14 @@
 <script lang="ts">
 import { onMount } from "svelte";
 
+import type { Locale } from "@i18n/locale";
+import { siteCopy } from "@i18n/site-copy";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import { getPostUrlBySlug } from "../utils/url-utils";
+
+export let locale: Locale = "en";
+$: copy = siteCopy[locale];
 
 export let tags: string[] = [];
 export let categories: string[] = [];
@@ -86,6 +91,7 @@ onMount(async () => {
 </script>
 
 <div class="card-base px-8 py-6">
+    {#if groups.length === 0}<p class="text-50">{copy.noResults}</p>{/if}
     {#each groups as group}
         <div>
             <div class="flex flex-row w-full items-center h-[3.75rem]">
@@ -99,13 +105,13 @@ onMount(async () => {
                     ></div>
                 </div>
                 <div class="w-[70%] md:w-[80%] transition text-left text-50">
-                    {group.posts.length} {i18n(group.posts.length === 1 ? I18nKey.postCount : I18nKey.postsCount)}
+                    {group.posts.length} {i18n(group.posts.length === 1 ? I18nKey.postCount : I18nKey.postsCount, locale)}
                 </div>
             </div>
 
             {#each group.posts as post}
                 <a
-                        href={getPostUrlBySlug(post.slug)}
+                        href={getPostUrlBySlug(post.slug, locale)}
                         aria-label={post.data.title}
                         class="group btn-plain !block h-10 w-full rounded-lg hover:text-[initial]"
                 >

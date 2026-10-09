@@ -1,0 +1,20 @@
+---
+import { getLocale, getPageAlternates, type PageAlternates } from "@i18n/locale";
+import { siteCopy } from "@i18n/site-copy";
+interface Props { alternates?: PageAlternates }
+const locale = getLocale(Astro.url);
+const targetLocale = locale === "en" ? "zh" : "en";
+const alternates = Astro.props.alternates ?? getPageAlternates(Astro.url.pathname);
+const href = alternates[targetLocale] ?? (Astro.props.alternates ? undefined : targetLocale === "zh" ? "/zh/" : "/");
+const copy = siteCopy[locale];
+---
+<div id="language-switch" class="flex items-center shrink-0">
+    {href ? <a href={href} data-no-swup hreflang={targetLocale === "zh" ? "zh-CN" : "en"}
+        lang={targetLocale === "zh" ? "zh-CN" : "en"} aria-label={copy.switchLanguage} title={copy.switchLanguage}
+        class="btn-plain scale-animation rounded-lg h-11 w-9 sm:w-11 font-bold text-sm active:scale-90">
+        {targetLocale === "zh" ? "中" : "EN"}
+    </a> : <span aria-disabled="true" title={copy.translationUnavailable} aria-label={copy.translationUnavailable}
+        class="rounded-lg h-11 w-9 sm:w-11 flex items-center justify-center font-bold text-sm text-30 cursor-not-allowed">
+        {targetLocale === "zh" ? "中" : "EN"}
+    </span>}
+</div>

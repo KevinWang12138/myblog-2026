@@ -1,8 +1,10 @@
 ---
 import I18nKey from "../i18n/i18nKey";
+import { getLocale } from "@i18n/locale";
 import { i18n } from "../i18n/translation";
+const locale = getLocale(Astro.url);
 ---
 
 <div class="card-base px-8 py-8">
-    <p class="text-50">{i18n(I18nKey.noPosts)}</p>
+    <p class="text-50">{i18n(I18nKey.noPosts, locale)}</p>
 </div>
