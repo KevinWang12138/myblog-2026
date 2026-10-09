@@ -4,7 +4,7 @@ published: 2026-10-09
 description: 从公司和收款，到域名、部署、数据库、企业邮箱，以及做 App 时需要的开发者账号，聊聊我会怎么选。
 tags: [SaaS, 出海, 独立开发]
 category: 创业记录
-draft: true
+draft: false
 lang: zh
 translationKey: saas-starter-kit
 ---
