@@ -8,7 +8,7 @@
 
 ## 中英双语
 
-- 英文保留根路径，中文在 `/zh/`；不得把旧英文链接迁移到 `/en/`。
+- 英文使用 `/en/`，中文使用 `/zh/`，分享链接固定对应语言。旧英文根路径通过 Cloudflare Pages 的 301 跳转兼容，不按浏览器语言自动分流。
 - `pnpm new-post <slug>` 同时创建 `posts/en/` 与 `posts/zh/` 下的两份草稿。文章使用 `lang: en|zh` 和相同的 `translationKey` 配对，详情见 `docs/bilingual-posts.md`。
 - 文章列表、归档、分类、标签、前后文章、搜索和 RSS 按语言隔离；缺失或未发布译文不得跳到其他文章。
 - 站点两份介绍在 `localizedSiteConfig`，关于页各用独立 Markdown；保持所有界面文案中英两套。

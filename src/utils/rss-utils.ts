@@ -1,6 +1,6 @@
 import rss from "@astrojs/rss";
 import { getSortedPosts } from "@utils/content-utils";
-import { getPostUrlBySlug } from "@utils/url-utils";
+import { getPostUrlBySlug, url } from "@utils/url-utils";
 import type { APIContext } from "astro";
 import MarkdownIt from "markdown-it";
 import sanitizeHtml from "sanitize-html";
@@ -24,7 +24,7 @@ export async function createRss(context: APIContext, locale: Locale) {
 	return rss({
 		title: siteConfig.title,
 		description: siteConfig.subtitle || "No description",
-		site: context.site ?? "https://fuwari.vercel.app",
+		site: new URL(url("/", locale), context.site ?? "https://kevinwang.xyz"),
 		items: blog.map((post) => {
 			const content =
 				typeof post.body === "string" ? post.body : String(post.body || "");

@@ -1,11 +1,11 @@
 ---
-import { getLocale, getPageAlternates, type PageAlternates } from "@i18n/locale";
+import { getLocale, getPageAlternates, localizePath, type PageAlternates } from "@i18n/locale";
 import { siteCopy } from "@i18n/site-copy";
 interface Props { alternates?: PageAlternates }
 const locale = getLocale(Astro.url);
 const targetLocale = locale === "en" ? "zh" : "en";
 const alternates = Astro.props.alternates ?? getPageAlternates(Astro.url.pathname);
-const href = alternates[targetLocale] ?? (Astro.props.alternates ? undefined : targetLocale === "zh" ? "/zh/" : "/");
+const href = alternates[targetLocale] ?? (Astro.props.alternates ? undefined : localizePath("/", targetLocale));
 const copy = siteCopy[locale];
 ---
 <div id="language-switch" class="flex items-center shrink-0">
