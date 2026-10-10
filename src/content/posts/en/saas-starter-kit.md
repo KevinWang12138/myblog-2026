@@ -21,9 +21,9 @@ You don't need to form a US company just to build a SaaS. If you already have a 
 
 Atlas charges a **one-time \$500 fee**, including state filing fees and the first year of registered agent service. The registered agent service costs **\$100 a year after that**. Ongoing company expenses, including tax filing, are separate.
 
-![Stripe Atlas pricing showing the \$500 setup fee and \$100 annual registered agent fee after the first year](../../../assets/images/saas-starter-kit/stripe-atlas-pricing.jpg)
+![Stripe Atlas pricing showing the \$500 setup fee and \$100 annual registered agent fee after the first year](../../../assets/images/saas-starter-kit/stripe-atlas-pricing-en.jpg)
 
-*Stripe Atlas pricing page. Screenshot taken on October 9, 2026.*
+*Stripe Atlas pricing page. Screenshot taken on October 10, 2026.*
 
 For banking, I'd look at [Mercury](https://mercury.com/). It offers business accounts and money management tools, with banking services provided by partner banks. A separate business account makes income and expenses easier to track.
 
