@@ -3,6 +3,7 @@
 - 遵守 `/Users/kevin/.codex/AGENTS.md` 和 `/Users/kevin/work/AGENTS.md` 的共享规则。
 - 项目基于 Astro 和 Fuwari，使用 `pnpm@9.14.4`，不要混用包管理器。
 - 文章放在 `src/content/posts/`，站点与导航配置放在 `src/config.ts`。保持既有视觉和 i18n 结构。
+- 中文文章的大标题和各级小标题只使用名词或名词短语，不使用带主谓宾的完整句子。
 - 允许文章集合为空；清空后首页与归档展示空状态，空标签和分类不显示。
 
 ## 中英双语

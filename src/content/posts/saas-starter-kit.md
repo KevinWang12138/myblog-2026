@@ -13,7 +13,7 @@ translationKey: saas-starter-kit
 
 这些东西和产品功能关系不大，但迟早要用：客户的钱从哪里收，服务跑在哪里，数据存在哪里，以及别人怎么联系到你。我会尽量选现成的服务，把这部分工作早点做完。
 
-## 公司、银行和收款，我会放在一起考虑
+## 公司、银行与收款
 
 如果决定用美国公司来经营，我推荐先看这套组合：**Stripe Atlas 注册公司，Mercury 开企业账户，Stripe 接收客户付款。**
 
@@ -37,7 +37,7 @@ Atlas 和 Mercury 之间也有一个方便的衔接。[Atlas Perks 的官方说�
 
 网页收款我会优先接 Stripe。第一版可以先用 [Stripe Checkout](https://docs.stripe.com/payments/checkout) 的现成结账页面，它支持一次性付款和订阅。先把下单、付款、开通服务这条流程接好，自定义支付页面可以往后放。
 
-## 域名和部署，我会优先看 Cloudflare
+## 域名与部署
 
 域名我推荐在 [Cloudflare Registrar](https://developers.cloudflare.com/registrar/) 买，DNS 和后续部署也方便放在一起管理。
 
@@ -55,7 +55,7 @@ Atlas 和 Mercury 之间也有一个方便的衔接。[Atlas Perks 的官方说�
 
 如果产品本身要在服务器上做大量视频处理、模型推理，那就另说。服务器能承受多少业务，要看实际计算量，不能只看注册用户数。
 
-## 数据库和文件存储，我推荐 Supabase
+## 数据库与文件存储
 
 [Supabase](https://supabase.com/) 把数据库和文件存储放在同一个平台里。对一个刚起步的小项目，这能少掉一些搭建和维护工作。
 
@@ -69,7 +69,7 @@ Atlas 和 Mercury 之间也有一个方便的衔接。[Atlas Perks 的官方说�
 
 我推荐它，主要是因为一个人做产品时，不太想同时维护数据库服务和文件服务。先把这两件事交给现成的平台，自己专心写业务逻辑。它还有其他功能，但不用为了用了 Supabase，就把整套产品都接一遍。
 
-## 企业邮箱，用 Google Workspace
+## 企业邮箱
 
 域名买好以后，我会配一个企业联系邮箱，比如 `hello@你的域名` 或 `support@你的域名`，用来接客户咨询、合作邮件，或者和平台沟通。
 
@@ -81,7 +81,7 @@ Atlas 和 Mercury 之间也有一个方便的衔接。[Atlas Perks 的官方说�
 
 刚开始先把实际会查看的邮箱配好就行。尤其是网站上留给客户的地址，要有人看、有人回复。
 
-## 确定要上架 App，再准备开发者账号
+## App 开发者账号
 
 如果只做 Web SaaS，这一项可以跳过。确定要把原生 App 上架到 App Store 或 Google Play，再准备对应平台的开发者账号。
 
