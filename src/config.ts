@@ -33,9 +33,12 @@ export const siteConfig: SiteConfig = {
 	favicon: [
 		// Leave this array empty to use the default favicon
 		{
-			src: "/assets/images/avatar.png", // Path of the favicon, relative to the /public directory
-			theme: "light", // (Optional) Either 'light' or 'dark', set only if you have different favicons for light and dark mode
-			sizes: "32x32", // (Optional) Size of the favicon, set only if you have favicons of different sizes
+			src: "/favicon/avatar-32.png",
+			sizes: "32x32",
+		},
+		{
+			src: "/favicon/avatar-192.png",
+			sizes: "192x192",
 		},
 	],
 };
